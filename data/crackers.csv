@@ -56,7 +56,7 @@ code,category,name,name_ta,mrp,price
 55,Fancy Fountain,Peacock - 3 Face,பீகாக் (3 ஃபேஸ்),1250,250
 56,Fancy Fountain,Siren - 3 pcs,சைரன் (3 பீஸ்),1300,260
 57,Fancy Fountain,Bada Peacock Multicolour,பெரிய பீகாக் மல்டிகலர்,2750,550
-58,Other Varieties,Pop Throw,பாப் த்ரோ,100,20
+58,Other Varieties,Pop Throw,பாப் த்ரோ,75,15
 59,Other Varieties,Butterfly,பட்டர்ஃபிளை,600,120
 60,Other Varieties,Photo Flash,போட்டோ ஃபிளாஷ்,700,140
 61,Other Varieties,Bambaram,பம்பரம்,750,150
@@ -92,3 +92,4 @@ code,category,name,name_ta,mrp,price
 91,Sparklers,30 cm Red,30 cm சிவப்பு கம்பி,325,65
 92,Sparklers,30 cm Green,30 cm பச்சை கம்பி,325,65
 93,Sparklers,50 cm Electric,50 cm எலக்ட்ரிக் கம்பி,1000,200
+94,Other Varieties,Bullet,புல்லட்,100,20
