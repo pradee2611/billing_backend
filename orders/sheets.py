@@ -11,7 +11,7 @@ from .repository import amounts, order_number
 log = logging.getLogger(__name__)
 
 SHEET_TAB = "Orders"
-HEADER = ["Date", "Time", "Order No.", "Payment", "Code", "Item", "Price", "Qty", "Line Total", "Order Total", "Customer", "Phone", "Cash Paid", "GPay Paid", "Less (Round Off)", "Amount Received"]
+HEADER = ["Date", "Time", "Order No.", "Customer", "Phone", "Payment", "Items", "Order Total", "Less (Round Off)", "Amount Received", "Cash Paid", "GPay Paid"]
 ORDER_NO_COLUMN = 3
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
@@ -25,8 +25,10 @@ def _worksheet():
     book = client.open_by_key(settings.GOOGLE_SHEET_ID)
     try:
         sheet = book.worksheet(SHEET_TAB)
-        if sheet.row_values(1) != HEADER:
-            sheet.update(values=[HEADER], range_name="A1")
+        current = sheet.row_values(1)
+        if current != HEADER:
+            # Blank out any leftover cells from an older, wider header.
+            sheet.update(values=[HEADER + [""] * max(0, len(current) - len(HEADER))], range_name="A1")
         return sheet
     except gspread.WorksheetNotFound:
         sheet = book.add_worksheet(SHEET_TAB, rows=1000, cols=len(HEADER))
@@ -35,28 +37,28 @@ def _worksheet():
 
 
 def rows_for(order):
+    """One row per bill: who paid, how much, and every item on it (one item per line in the cell)."""
     local = timezone.localtime(order["created_at"])
     cash, gpay = amounts(order)
+    items = "\n".join(
+        f'{item["product_name"]} x {item["quantity"]} @ {item["unit_price"]} = {item["line_total"]}'
+        for item in order["items"]
+    )
     return [
         [
             local.strftime("%Y-%m-%d"),
             local.strftime("%H:%M"),
             order_number(order["_id"]),
-            order["payment_mode"],
-            item["code"],
-            item["product_name"],
-            float(item["unit_price"]),
-            item["quantity"],
-            float(item["line_total"]),
-            float(order["total"]),
             order.get("customer_name", ""),
             order.get("customer_phone", ""),
-            float(cash),
-            float(gpay),
+            order["payment_mode"],
+            items,
+            float(order["total"]),
             float(order.get("less_amount", "0")),
             float(order.get("payable", order["total"])),
+            float(cash),
+            float(gpay),
         ]
-        for item in order["items"]
     ]
 
 

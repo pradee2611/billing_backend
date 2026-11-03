@@ -164,11 +164,12 @@ class OrderApiTests(SimpleTestCase):
         with override_settings(APP_PASSWORD="new-password"):
             self.assertEqual(self.client.get("/api/orders/").status_code, 401)
 
-    def test_sheet_rows_one_per_item(self):
+    def test_sheet_row_one_per_bill(self):
         from orders import sheets
 
         order = mongo._db.orders.find_one({"_id": self.place().json()["id"]})
         rows = sheets.rows_for(order)
-        self.assertEqual(len(rows), 2)
+        self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0][2], "ORD-0001")
-        self.assertEqual(rows[0][9:], [190.0, "", "", 190.0, 0.0, 0.0, 190.0])
+        self.assertEqual(rows[0][7:], [190.0, 0.0, 190.0, 190.0, 0.0])
+        self.assertEqual(rows[0][6].count("\n"), 1)
