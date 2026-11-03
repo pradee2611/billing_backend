@@ -5,3 +5,4 @@ pymongo[srv]>=4.8
 python-dotenv>=1.0
 gspread>=6.1
 mongomock>=4.1
+gunicorn>=22.0
