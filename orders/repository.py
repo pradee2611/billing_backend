@@ -209,7 +209,14 @@ def grouped_by_date():
                 "CASH": str(sum((Decimal(amounts(o)[0]) for o in orders), Decimal("0"))),
                 "GPAY": str(sum((Decimal(amounts(o)[1]) for o in orders), Decimal("0"))),
             },
-            "orders": [{**summary(o), "item_count": sum(i["quantity"] for i in o["items"])} for o in orders],
+            "orders": [
+                {
+                    **summary(o),
+                    "item_count": sum(i["quantity"] for i in o["items"]),
+                    "lines": [{"name": i["product_name"], "quantity": i["quantity"], "unit_price": i["unit_price"]} for i in o["items"]],
+                }
+                for o in orders
+            ],
         }
         for day, orders in by_date.items()
     ]
